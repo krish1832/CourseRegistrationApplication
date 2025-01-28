@@ -1,15 +1,15 @@
 package com.example.Course.Registration.App.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 
 
 @Entity
@@ -20,79 +20,102 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
 
     @Column(nullable = false)
-    private String name;
+    private String CourseName;
 
     @Column(nullable = false)
     private int capacity;
 
     @Column(nullable = false)
-    private int Credits;
+    private int remainingSeats;
 
-
-    @ManyToOne
-    @JoinColumn(name="professor_id")
-    private Professor professor;
+    @Column(nullable = false)
+    private int CourseCredit;
 
     @ManyToMany(mappedBy = "courses")
-    private List<Student> students;
+    private List<Student> students = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "semester_id")
-    private Semester semester; // Add this line
+    @JoinColumn(name = "semester_id", nullable = true)
+    @JsonBackReference
+    private Semester semester;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "professor_id") // Foreign key column in the course table
+    private Professor professor;
 
 
-    public List<Student> getStudents() {
-        return students;
+
+
+    //Getter and Setter
+
+
+    public Long getId() {
+        return Id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        Id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getCourseName() {
+        return CourseName;
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public void setCredits(int credits) {
-        Credits = credits;
-    }
-
-    public void setProfessor(Professor professor) {
-        this.professor = professor;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
+    public void setCourseName(String courseName) {
+        CourseName = courseName;
     }
 
     public int getCapacity() {
         return capacity;
     }
 
-    public int getCredits() {
-        return Credits;
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
-    public Professor getProfessor() {
+    public int getRemainingSeats() {
+        return remainingSeats;
+    }
+
+    public void setRemainingSeats(int remainingSeats) {
+        this.remainingSeats = remainingSeats;
+    }
+
+
+
+    public void setProfessor(Professor professor) {
+         this.professor = professor;
+    }
+
+    public Professor getProfessor(){
         return professor;
     }
 
+    public int getCourseCredit() {
+        return CourseCredit;
+    }
 
-    // Getters and Setters
+    public void setCourseCredit(int courseCredit) {
+        CourseCredit = courseCredit;
+    }
 
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
 }

@@ -2,13 +2,15 @@ package com.example.Course.Registration.App.Util;
 
 public class JwtResponse {
     private String token;
-    private String role; // You can add the role to the response if needed
+    private String username;
 
-    public JwtResponse(String token, String role) {
+    // Constructor
+    public JwtResponse(String token, String username) {
         this.token = token;
-        this.role = role;
+        this.username = username;
     }
 
+    // Getters and Setters
     public String getToken() {
         return token;
     }
@@ -17,12 +19,11 @@ public class JwtResponse {
         this.token = token;
     }
 
-    public String getRole() {
-        return role;
+    public String getUsername() {
+        return username;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
-

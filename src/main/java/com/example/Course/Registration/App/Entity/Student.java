@@ -1,6 +1,8 @@
 package com.example.Course.Registration.App.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,16 +27,21 @@ public class Student {
      private String password;
 
     @ManyToMany
-     @JoinTable(
-             name = "student_courses",
-             joinColumns = @JoinColumn(name="student_id"),
-             inverseJoinColumns = @JoinColumn(name = "course_id")
-     )
-     private List<Course> courses;
+    @JoinTable(
+            name = "student_courses",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    @JsonBackReference
+    private Set<Course> courses = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "semester_id")
+    @JoinColumn(name = "semester_id", nullable = true)
+    @JsonBackReference
     private Semester semester;
+
+
+    // Getter and Setter
 
 
     public Long getId() {
@@ -69,11 +76,19 @@ public class Student {
         this.password = password;
     }
 
-    public List<Course> getCourses() {
+    public Set<Course> getCourses() {
         return courses;
     }
 
-    public void setCourses(List<Course> courses) {
+    public void setCourses(Set<Course> courses) {
         this.courses = courses;
+    }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
     }
 }

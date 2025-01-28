@@ -20,7 +20,7 @@ public class Admin {
     @Column(nullable = false)
     private String email;
 
-    // Getters and Setters
+    // Getters and Setters is already added
 
 
     public Long getId() {

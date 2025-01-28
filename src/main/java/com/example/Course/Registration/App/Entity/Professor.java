@@ -1,5 +1,7 @@
 package com.example.Course.Registration.App.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,7 +24,11 @@ public class Professor {
     private String password;
 
     @OneToMany(mappedBy = "professor",cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Course> courses;
+
+
+    //Getter And Setter
 
 
     public Long getId() {
@@ -46,7 +52,7 @@ public class Professor {
     }
 
     public void setEmail(String email) {
-        email = email;
+        this.email = email;
     }
 
     public String getPassword() {

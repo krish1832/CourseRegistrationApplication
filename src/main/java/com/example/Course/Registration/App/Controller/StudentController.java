@@ -1,14 +1,14 @@
 package com.example.Course.Registration.App.Controller;
 
 
+import com.example.Course.Registration.App.DTOs.StudentDTO;
 import com.example.Course.Registration.App.Entity.Course;
+import com.example.Course.Registration.App.Entity.CourseRequest;
 import com.example.Course.Registration.App.Entity.Student;
-import com.example.Course.Registration.App.Repository.AssignCourseRequestRepository;
-import com.example.Course.Registration.App.Repository.StudentRepository;
+import com.example.Course.Registration.App.Service.CourseService;
 import com.example.Course.Registration.App.Service.StudentService;
-import com.example.Course.Registration.App.Util.AssignCourseRequest;
-import jakarta.persistence.GeneratedValue;
-import org.aspectj.lang.annotation.DeclareWarning;
+import com.example.Course.Registration.App.Util.JwtRequest;
+import com.example.Course.Registration.App.Util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,39 +20,41 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/students")
-//@PreAuthorize("hasRole('STUDENT')")
+@PreAuthorize("hasRole('STUDENT')") // Ensure this matches the role in the token
 public class StudentController {
 
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private CourseService courseService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
-    @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
-        return ResponseEntity.ok(studentService.getAllStudents());
-    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> viewStudentDetails(@PathVariable Long id){
         return  ResponseEntity.ok(studentService.getStudentDetails(id));
     }
+    @PreAuthorize("hasRole('STUDENT')")
+    @PutMapping("/update-student/{id}")
+    public ResponseEntity<Student> updateStudentDetails(@PathVariable Long id,@RequestBody StudentDTO studentDTO,@RequestParam String token){
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudentDetails(@PathVariable Long id,@RequestBody Student updateDetails){
-        return ResponseEntity.ok(studentService.updateStudentDetails(id,updateDetails));
+        Student student = studentService.mapToEntity(studentDTO);
+        return ResponseEntity.ok(studentService.updateStudent(id,student));
+    }
+    @GetMapping("/get-course-list")
+    public ResponseEntity<List<Course>> getAllCourses() {
+        return ResponseEntity.ok(courseService.getAllCourses());
     }
 
-    @GetMapping("/{id}/courses")
-    public ResponseEntity<List<Course>> viewAllCourses(@PathVariable Long id) {
-        return ResponseEntity.ok(studentService.getAllCourses(id));
-    }
 
-
-
-    @PostMapping("/{id}/request-course")
-    public String submitCourseRequest(Long studentId, List<Long> courseIds) {
-          return studentService.submitCourseRequest(studentId,courseIds);
+    @PostMapping("submit-course-form")
+    public String submitCourseRequest(@RequestBody CourseRequest courseRequest) {
+          return studentService.submitCourseRequest(courseRequest.getStudentId(),courseRequest.getCourseIds());
     }
 
 

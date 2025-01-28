@@ -1,5 +1,6 @@
 package com.example.Course.Registration.App.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 //import org.springframework.data.annotation.Id;
@@ -14,18 +15,22 @@ import java.util.List;
 public class Semester {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private Long id;
+    private  Long id;
+
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
 
     @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Course> courses = new ArrayList<>();
 
     @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
     private List<Student> students = new ArrayList<>();
 
-    // Getters and Setters
+
+    //Getter and Setter
+
 
     public Long getId() {
         return id;

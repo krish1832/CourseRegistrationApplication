@@ -2,21 +2,27 @@ package com.example.Course.Registration.App.Service;
 
 import com.example.Course.Registration.App.Entity.Course;
 import com.example.Course.Registration.App.Entity.Professor;
-import com.example.Course.Registration.App.Entity.Semester;
 import com.example.Course.Registration.App.Entity.Student;
 import com.example.Course.Registration.App.Repository.*;
-import com.example.Course.Registration.App.Util.AssignCourseRequest;
+import com.example.Course.Registration.App.Entity.CourseRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Validated
 
 public class AdminService {
 
+
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private ProfessorRepository professorRepository;
@@ -25,9 +31,8 @@ public class AdminService {
     private CourseRepository courseRepository;
 
     @Autowired
-    private AssignCourseRequestRepository assignCourseRequestRepository;
-    @Autowired
-    private SemesterRepository semesterRepository;
+    private CourseRequestRepository courseRequestRepository;
+
 
 
     public Student addStudent(Student newStudent) {
@@ -42,65 +47,80 @@ public class AdminService {
         return courseRepository.save(newCourse);
     }
 
-    public Semester addSemester(Semester newSemester) {
-        return semesterRepository.save(newSemester);
-    }
+
 
 
     public String assignCoursesFCFS() {
-        List<AssignCourseRequest> requests = assignCourseRequestRepository.findAll();
-        StringBuilder result = new StringBuilder();
 
-        for (AssignCourseRequest request : requests) {
+
+        List<CourseRequest> requests = courseRequestRepository.findAll();
+        requests.sort(Comparator.comparing(CourseRequest::getTimestamp));
+
+        StringBuilder notAssigned = new StringBuilder();
+        StringBuilder assigned = new StringBuilder();
+
+        for (CourseRequest request : requests) {
             Student student = studentRepository.findById(request.getStudentId())
                     .orElseThrow(() -> new RuntimeException("Student not found"));
 
             List<Course> courses = courseRepository.findAllById(request.getCourseIds());
 
-            for (int i=0;i<courses.size();i++) {
-                  Course course = courses.get(i);
-//                  course.setCredits(5);
-                if (course.getStudents().size() < course.getCapacity()) {
+            for (Course course : courses) {
+                if (course.getRemainingSeats() > 0) {
+                    // Assign the course to the student
                     course.getStudents().add(student);
                     student.getCourses().add(course);
+                    assigned.append("Course ID ").append(course.getId())
+                            .append(" (").append(course.getCourseName()).append(") ")
+                            .append("has been successfully assigned.\n");
                 } else {
-                    result.append("Course ID ").append(course.getId())
-                            .append(" is full. Could not assign to Student ID ")
+                    notAssigned.append("Course ID ").append(course.getId())
+                            .append(" (").append(course.getCourseName()).append(") ")
+                            .append("is full. Could not assign to Student ID ")
                             .append(student.getId()).append(".\n");
                 }
             }
+            // Save the updated student entity
             studentRepository.save(student);
+
+            // Send notification to the student via email
+            sendNotification(student.getEmail(), assigned.toString(), notAssigned.toString());
+
+            // Clear assigned and notAssigned for the next student
+            assigned.setLength(0);
+            notAssigned.setLength(0);
         }
 
-        assignCourseRequestRepository.deleteAll(); // Clear the requests after processing
-        return result.length() > 0 ? result.toString() : "All courses assigned successfully.";
+        // Clear all course requests after processing
+        courseRequestRepository.deleteAll();
+
+        return notAssigned.length() > 0 ? notAssigned.toString() : "All courses assigned successfully.";
+    }
+
+
+
+    private void sendNotification(String studentEmail, String assignedCourses, String notAssignedCourses) {
+        String subject = "Your Course Assignment Status";
+        StringBuilder message = new StringBuilder();
+
+        message.append("Dear Student,\n\n")
+                .append("Here are your course assignment results:\n\n")
+                .append(assignedCourses)
+                .append("\n")
+                .append(notAssignedCourses)
+                .append("\nBest regards,\nYour Course Management Team");
+
+        // Send email notification
+        emailService.sendEmail(studentEmail, subject, message.toString());
     }
 
 
 
 
-    public Course updateCourse(Long id, Course updatedDetails) {
-        Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-        course.setName(updatedDetails.getName());
-        course.setCredits(updatedDetails.getCredits());
-        return courseRepository.save(course);
-
-    }
 
 
-    public Semester updateSemester(Long id, Semester updatedSemester) {
 
-        Semester semester = semesterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-        semester.setName(updatedSemester.getName());
-        semester.setId(updatedSemester.getId());
-        semester.setCourses(updatedSemester.getCourses());
-        semester.setStartDate(updatedSemester.getStartDate());
-        semester.setEndDate(updatedSemester.getEndDate());
-        semester.setStudents(updatedSemester.getStudents());
-        return semesterRepository.save(semester);
-    }
+
 
 
 

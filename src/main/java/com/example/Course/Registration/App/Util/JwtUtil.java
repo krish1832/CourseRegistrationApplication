@@ -3,12 +3,12 @@ package com.example.Course.Registration.App.Util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.Key;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -20,13 +20,24 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long jwtExpirationInMs;
 
-    // Generate a token
-    public String generateToken(String username, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);  // Add role claim
-        return createToken(claims, username);
+    private Key signingKey;
+
+    public JwtUtil() {
+        // Ensure signing key is set from the secret or use default if not set.
+        if (secretKey != null && !secretKey.isEmpty()) {
+            signingKey = new javax.crypto.spec.SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+        } else {
+            signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS256); // fallback to generated key
+        }
     }
 
+    // Generate a token with roles as List
+    public String generateToken(String username, List<String> roles) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", username); // Add username as part of the claims
+        claims.put("roles", roles); // Store roles as a list directly
+        return createToken(claims, username);
+    }
 
     // Create the token
     private String createToken(Map<String, Object> claims, String subject) {
@@ -35,7 +46,7 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(signingKey) // Use the signing key
                 .compact();
     }
 
@@ -55,15 +66,20 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
-        // Use the correct method for parsing JWT in your version of jjwt
+    // Extract all claims from the token
+    public Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(signingKey) // Ensure the signing key is used here
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    // Validate token
+    // Extract roles from the token (List of roles)
+    public List<String> extractRoles(String token) {
+        return extractClaim(token, claims -> claims.get("roles", List.class));
+    }
+
+    // Validate the token
     public boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
