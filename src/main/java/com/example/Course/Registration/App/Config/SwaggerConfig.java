@@ -1,5 +1,5 @@
 package com.example.Course.Registration.App.Config;
-//package com.example.Course.Registration.App.Config;
+
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

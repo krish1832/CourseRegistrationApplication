@@ -2,9 +2,9 @@ package com.example.Course.Registration.App.DTOs;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 
 @Data

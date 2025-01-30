@@ -57,7 +57,7 @@ public class ProfessorService {
         Professor professor = new Professor();
         professor.setName(professorDTO.getName());
         professor.setEmail(professorDTO.getEmail());
-        String encodedPassword = passwordEncoder.encode(professor.getPassword());
+        String encodedPassword = passwordEncoder.encode(professorDTO.getPassword());
         professor.setPassword(encodedPassword);
         // Any additional fields can be mapped here
         return professor;

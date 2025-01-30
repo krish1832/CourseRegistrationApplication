@@ -13,17 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import javax.sound.midi.SysexMessage;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Component
@@ -50,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
                 String username = jwtUtil.extractUsername(token);
-                System.out.println("Username is"+username);
+//                System.out.println("Username is"+username);
 
                 if (username != null && jwtUtil.validateToken(token, username)) {
                     // Fetch the user details from one of the three repositories
@@ -68,12 +64,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         role = "PROFESSOR";
                     }
 
-                    System.out.println("role is"+role);
+//                    System.out.println("role is"+role);
 
                     if (role != null) {
                         // Create authorities based on the role
                         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-                        System.out.println("Authorities "+authorities);
+                        System.out.println("Authorities " + authorities);
                         // Set authentication
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 username,

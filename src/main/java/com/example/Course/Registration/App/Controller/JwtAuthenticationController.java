@@ -1,4 +1,5 @@
 package com.example.Course.Registration.App.Controller;
+
 import com.example.Course.Registration.App.Entity.Admin;
 import com.example.Course.Registration.App.Entity.Professor;
 import com.example.Course.Registration.App.Entity.Student;
@@ -10,12 +11,9 @@ import com.example.Course.Registration.App.Util.JwtResponse;
 import com.example.Course.Registration.App.Util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RestController
 @RequestMapping("/user-login")
@@ -56,7 +51,7 @@ public class JwtAuthenticationController {
 
         // Fetch the role based on the email
         String role = getRoleByEmail(request.getEmail());
-        System.out.println("Fetch Role"+role);
+        System.out.println("Fetch Role" + role);
 
         // Generate the JWT token with the role as a list
         String token = jwtUtil.generateToken(request.getEmail(), Arrays.asList(role));
@@ -66,12 +61,12 @@ public class JwtAuthenticationController {
     }
 
     private void authenticateUser(String email, String password) {
-        // Try to find the user in all three repositories
+
         Optional<Admin> admin = adminRepository.findByEmail(email);
         Optional<Student> student = studentRepository.findByEmail(email);
         Optional<Professor> professor = professorRepository.findByEmail(email);
 
-        // Authenticate based on where the user is found
+
         if (admin.isPresent()) {
             if (passwordEncoder.matches(password, admin.get().getPassword())) {  // Use matches to compare encoded password
                 authenticationManager.authenticate(

@@ -9,17 +9,14 @@ import com.example.Course.Registration.App.Entity.Professor;
 import com.example.Course.Registration.App.Entity.Semester;
 import com.example.Course.Registration.App.Entity.Student;
 import com.example.Course.Registration.App.Service.*;
-//import jakarta.validation.Valid;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-//import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/admin")
@@ -45,7 +42,7 @@ public class AdminController {
     private EmailService emailService;
 
     @PostMapping("/add-students")
-    public ResponseEntity<Student> addStudent(@RequestBody StudentDTO studentDTO) {
+    public ResponseEntity<Student> addStudent(@Valid @RequestBody StudentDTO studentDTO) {
         // Convert DTO to entity in the service layer or manually here
         Student student = studentService.mapToEntity(studentDTO);
         return ResponseEntity.ok(studentService.addStudent(student));
@@ -58,25 +55,25 @@ public class AdminController {
     }
 
     @PostMapping("/add-courses")
-    public ResponseEntity<Course> addCourse(@RequestBody CourseDTO courseDTO) {
+    public ResponseEntity<Course> addCourse(@Valid @RequestBody CourseDTO courseDTO) {
         Course course = courseService.mapToEntity(courseDTO);
         return ResponseEntity.ok(courseService.addCourse(course));
     }
 
     @PostMapping("/add-semester")
-    public ResponseEntity<Semester> addSemester(@RequestBody SemesterDTO semesterDTO) {
+    public ResponseEntity<Semester> addSemester(@Valid @RequestBody SemesterDTO semesterDTO) {
         Semester semester = semesterService.mapToEntity(semesterDTO);
         return ResponseEntity.ok(semesterService.addSemester(semester));
     }
 
     @PutMapping("/update-semester/{id}")
-    public ResponseEntity<Semester> updateSemester(@RequestBody SemesterDTO semesterDTO, @PathVariable Long id) {
+    public ResponseEntity<Semester> updateSemester(@Valid @RequestBody SemesterDTO semesterDTO, @PathVariable Long id) {
         Semester semester = semesterService.mapToEntity(semesterDTO);
         return ResponseEntity.ok(semesterService.updateSemester(id, semester));
     }
 
     @PutMapping("/update-courses/{id}")
-    public ResponseEntity<Course> updateCourse(@RequestBody CourseDTO courseDTO, @PathVariable Long id) {
+    public ResponseEntity<Course> updateCourse(@Valid @RequestBody CourseDTO courseDTO, @PathVariable Long id) {
         Course course = courseService.mapToEntity(courseDTO);
         return ResponseEntity.ok(courseService.updateCourse(id, course));
     }
