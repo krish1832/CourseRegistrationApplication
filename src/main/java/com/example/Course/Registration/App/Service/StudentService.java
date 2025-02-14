@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,13 +58,14 @@ public class StudentService {
         return courseRepository.findAll(); // Retrieve all courses
     }
 
-    public String submitCourseRequest(Long studentId, List<Long> courseIds) {
+    public String submitCourseRequest(Long studentId, List<Long> courseIds, LocalDateTime time) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         CourseRequest request = new CourseRequest();
         request.setStudentId(studentId);
         request.setCourseIds(courseIds);
+        request.setTimestamp(time);
         courseRequestRepository.save(request);
 
         return "Course request saved. Admin will process it shortly.";

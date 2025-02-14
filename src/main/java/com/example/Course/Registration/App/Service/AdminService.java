@@ -63,7 +63,9 @@ public class AdminService {
             Student student = studentRepository.findById(request.getStudentId())
                     .orElseThrow(() -> new RuntimeException("Student not found"));
 
+
             List<Course> courses = courseRepository.findAllById(request.getCourseIds());
+            System.out.println(student.getName()+"fetched with size"+courses.size());
 
             for (Course course : courses) {
                 if (course.getRemainingSeats() > 0) {
@@ -73,7 +75,11 @@ public class AdminService {
                     assigned.append("Course ID ").append(course.getId())
                             .append(" (").append(course.getCourseName()).append(") ")
                             .append("has been successfully assigned.\n");
+                    course.setRemainingSeats(course.getRemainingSeats()-1);
+                    courseRepository.save(course);
+
                 } else {
+                    System.out.println(student.getName()+"not alloted full!!!"+course.getCourseName());
                     notAssigned.append("Course ID ").append(course.getId())
                             .append(" (").append(course.getCourseName()).append(") ")
                             .append("is full. Could not assign to Student ID ")

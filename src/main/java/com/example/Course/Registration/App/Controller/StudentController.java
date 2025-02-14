@@ -86,7 +86,7 @@ public class StudentController {
         if (!existingStudent.getEmail().equals(username)) {
             return "Unauthorized to update this student";
         }
-        return studentService.submitCourseRequest(courseRequest.getStudentId(), courseRequest.getCourseIds());
+        return studentService.submitCourseRequest(courseRequest.getStudentId(), courseRequest.getCourseIds(),courseRequest.getTimestamp());
     }
 
 
