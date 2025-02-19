@@ -70,6 +70,6 @@ Below is a high-level system architecture diagram representing the Course Regist
 ### Steps to Run Locally
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/course-registration-system.git
+   git clone https://github.com/krish1832/course-registration-system.git
    cd course-registration-system
 
