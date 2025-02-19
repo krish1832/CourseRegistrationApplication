@@ -7,7 +7,6 @@ import com.example.Course.Registration.App.Entity.Semester;
 import com.example.Course.Registration.App.Repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -34,7 +33,7 @@ public class CourseService {
         if(courseRepository.existsById(id)){
             courseRepository.deleteById(id);
         }else {
-            throw new IllegalArgumentException("Student with ID "+id+" is not Found");
+            throw new IllegalArgumentException("Course with ID "+id+" is not Found");
         }
     }
 
@@ -55,15 +54,14 @@ public class CourseService {
         course.setRemainingSeats(courseDTO.getRemainingSeats());
         course.setCourseCredit(courseDTO.getCourseCredit());
 
-        // Set the Professor entity by looking it up using professorId
         Professor professor = professorService.getProfessorById(courseDTO.getProfessorId());
         course.setProfessor(professor);
 
-        // Convert Semester using semesterService
+        // Convert Semester using semesterServic
         Semester semester = semesterService.getSemesterByName(courseDTO.getSemesterName());
         course.setSemester(semester);
 
-        // Any additional fields can be mapped here
+    
         return course;
     }
 
