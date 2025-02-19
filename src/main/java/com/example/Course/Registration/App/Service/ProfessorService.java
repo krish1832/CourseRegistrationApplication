@@ -8,7 +8,6 @@ import com.example.Course.Registration.App.Repository.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -48,7 +47,7 @@ public class ProfessorService {
         if(professorRepository.existsById(id)){
             professorRepository.deleteById(id);
         }else {
-            throw new IllegalArgumentException("Student with ID "+id+" is not Found");
+            throw new IllegalArgumentException("Professor with ID "+id+" is not Found");
         }
     }
 
@@ -59,7 +58,6 @@ public class ProfessorService {
         professor.setEmail(professorDTO.getEmail());
         String encodedPassword = passwordEncoder.encode(professorDTO.getPassword());
         professor.setPassword(encodedPassword);
-        // Any additional fields can be mapped here
         return professor;
     }
 
