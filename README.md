@@ -6,7 +6,7 @@ The **Course Registration System** is a web-based application built using **Spri
 
 ## Tech Stack
 
-- **Backend:** Spring Boot 3.0 (Java 21)  
+- **Backend:** Spring Boot 3.4 (Java 21)  
 - **Database:** PostgreSQL  
 - **Authentication:** JWT & Spring Security  
 - **API Documentation:** Swagger UI  
