@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -29,25 +28,25 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
 
-        // Check for Admin
+
         Optional<Admin> adminEntityOptional = adminRepository.findByEmail(username);
         if (adminEntityOptional.isPresent()) {
             Admin admin = adminEntityOptional.get();
             return User.builder()
                     .username(admin.getEmail())
-                    .password(admin.getPassword())  // Ensure the password is hashed in DB
-                    .roles("ADMIN") // You can assign roles here
+                    .password(admin.getPassword())  // we have to ensure that password is hashed in DB
+                    .roles("ADMIN") // we can assign role here
                     .build();
         }
 
-        // Check for Student
+        // Checking for Student
         Optional<Student> studentEntityOptional = studentRepository.findByEmail(username);
         if (studentEntityOptional.isPresent()) {
             Student student = studentEntityOptional.get();
             return User.builder()
                     .username(student.getEmail())
-                    .password(student.getPassword())  // Ensure the password is hashed in DB
-                    .roles("STUDENT") // You can assign roles here
+                    .password(student.getPassword())  
+                    .roles("STUDENT") 
                     .build();
         }
 
@@ -57,12 +56,12 @@ public class CustomUserDetailsService implements UserDetailsService {
             Professor professor = professorEntityOptional.get();
             return User.builder()
                     .username(professor.getEmail())
-                    .password(professor.getPassword())  // Ensure the password is hashed in DB
-                    .roles("PROFESSOR") // You can assign roles here
+                    .password(professor.getPassword())  
+                    .roles("PROFESSOR") 
                     .build();
         }
 
-        // If no user found
+        // If no user found then
         throw new RuntimeException("User not found with username: " + username);
     }
 }
