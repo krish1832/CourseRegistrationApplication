@@ -44,7 +44,7 @@ The **Course Registration System** is a web-based application built using **Spri
 
 For detailed API documentation, you can access the **Swagger UI** interface hosted on Render:
 
-[Swagger UI Documentation](https://courseregistrationapplication.onrender.com/swagger-ui/index.html#/)
+[Swagger UI Documentation](https://courseregistrationapplication.onrender.com/swagger-ui/index.html#/) (It might take some time to load)
 
 This link provides comprehensive details about all the available APIs, including request/response formats, endpoints, and authentication mechanisms.
 
